@@ -1,0 +1,10 @@
+{
+  "tmp": {
+    "mode": "disk",
+    "ref": "/tmp/fileproxy"
+  },
+  "b2": {
+    "mode": "b2",
+    "ref": "zshipko-testing"
+  }
+}
