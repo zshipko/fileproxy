@@ -7,4 +7,5 @@ type bucket interface {
 	Put(key string, value io.Reader) error
 	Head(key string) (bool, error)
 	Delete(key string) error
+	Config() bucketConfig
 }

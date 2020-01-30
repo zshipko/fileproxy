@@ -10,9 +10,14 @@ import (
 )
 
 type s3Bucket struct {
-	cfg  client.ConfigProvider
-	conn *s3.S3
-	name string
+	config bucketConfig
+	cfg    client.ConfigProvider
+	conn   *s3.S3
+	name   string
+}
+
+func (d *s3Bucket) Config() bucketConfig {
+	return d.config
 }
 
 func newS3Bucket(cfg client.ConfigProvider, name string) (*s3Bucket, error) {
@@ -78,4 +83,12 @@ func (b *s3Bucket) Delete(path string) error {
 	}
 
 	return nil
+}
+
+func (d *s3Bucket) Upload() bool {
+	return true
+}
+
+func (d *s3Bucket) Cache() bool {
+	return false
 }

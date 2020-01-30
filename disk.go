@@ -7,7 +7,12 @@ import (
 )
 
 type diskBucket struct {
-	root string
+	config bucketConfig
+	root   string
+}
+
+func (d *diskBucket) Config() bucketConfig {
+	return d.config
 }
 
 func (d *diskBucket) makePath(args ...string) string {
@@ -65,6 +70,14 @@ func (d *diskBucket) Delete(key string) error {
 	}
 
 	return os.Remove(d.makePath(key))
+}
+
+func (d *diskBucket) Upload() bool {
+	return false
+}
+
+func (d *diskBucket) Cache() bool {
+	return true
 }
 
 func newDiskBucket(root string) *diskBucket {
