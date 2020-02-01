@@ -30,32 +30,37 @@ func (s *server) handler(w http.ResponseWriter, r *http.Request) {
 		case "get":
 			x, err := b.Get(path)
 			if err != nil {
-				//if i == len(s.buckets)-1 {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-				//}
+				if i == len(s.buckets)-1 {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				continue
 			}
 			defer x.Close()
 
 			if _, err = io.Copy(w, x); err != nil {
-				log.Println("ERROR:", err)
+				if i == len(s.buckets)-1 {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				continue
 			}
+
 			return
 		case "post":
 			fallthrough
 		case "put":
 			defer r.Body.Close()
 
-			if b.Config().Upload || b.Config().Cache {
+			if b.Config().Upload {
 				if err := b.Put(path, r.Body); err != nil {
 					if i == len(s.buckets)-1 {
 						http.Error(w, err.Error(), http.StatusInternalServerError)
 						return
 					}
 				}
-				if !b.Config().Cache {
-					return
-				}
+
+				return
 			}
 		case "delete":
 			if err := b.Delete(path); err != nil {
