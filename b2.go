@@ -95,6 +95,23 @@ func (b *b2Bucket) Delete(key string) error {
 	return obj.Delete(context.Background())
 }
 
+func (b *b2Bucket) List(prefix string) ([]string, error) {
+	opts := b2.ListPrefix(prefix)
+	obj := b.bucket.List(context.Background(), opts)
+
+	dest := []string{}
+
+	if err := obj.Err(); err != nil {
+		return dest, err
+	}
+
+	for obj.Next() {
+		dest = append(dest, obj.Object().Name())
+	}
+
+	return dest, nil
+}
+
 func (d *b2Bucket) Upload() bool {
 	return true
 }

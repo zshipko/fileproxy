@@ -85,6 +85,27 @@ func (b *s3Bucket) Delete(path string) error {
 	return nil
 }
 
+func (b *s3Bucket) List(prefix string) ([]string, error) {
+	req := &s3.ListObjectsV2Input{}
+	req.Bucket = &b.name
+	if prefix != "" {
+		req.Prefix = &prefix
+	}
+
+	dest := []string{}
+
+	res, err := b.conn.ListObjectsV2(req)
+	if err != nil {
+		return dest, err
+	}
+
+	for _, obj := range res.Contents {
+		dest = append(dest, *obj.Key)
+	}
+
+	return dest, nil
+}
+
 func (d *s3Bucket) Upload() bool {
 	return true
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -21,7 +22,27 @@ func (s *server) handler(w http.ResponseWriter, r *http.Request) {
 	log.Println("PATH:", path)
 
 	if len(path) < 1 {
-		http.Error(w, "Invalid path", http.StatusBadRequest)
+		nameSet := map[string]bool{}
+		for i, b := range s.buckets {
+			buckets, err := b.List("")
+			if err != nil {
+				continue
+			} else if err != nil && i == len(s.buckets)-1 && len(nameSet) == 0 {
+				http.Error(w, "Invalid path", http.StatusBadRequest)
+				return
+			}
+
+			for _, x := range buckets {
+				nameSet[x] = true
+			}
+		}
+
+		dest := []string{}
+		for x := range nameSet {
+			dest = append(dest, x)
+		}
+
+		json.NewEncoder(w).Encode(dest)
 		return
 	}
 

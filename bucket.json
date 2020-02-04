@@ -1,6 +1,7 @@
 [
   {
-    "mode": "disk",
-    "ref": "/tmp/fileproxy"
+    "backend": "local",
+    "name": "/tmp/fileproxy",
+    "upload": true
   }
 ]

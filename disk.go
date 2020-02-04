@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type diskBucket struct {
@@ -70,6 +71,31 @@ func (d *diskBucket) Delete(key string) error {
 	}
 
 	return os.Remove(d.makePath(key))
+}
+
+func (d *diskBucket) List(prefix string) ([]string, error) {
+	dest := []string{}
+
+	err := filepath.Walk(d.root, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		path = strings.TrimPrefix(path, d.root)
+
+		if prefix == "" && !strings.HasPrefix(path, prefix) {
+			return nil
+		}
+
+		dest = append(dest, path)
+		return nil
+	})
+
+	return dest, err
 }
 
 func (d *diskBucket) Upload() bool {
