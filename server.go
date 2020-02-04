@@ -19,9 +19,15 @@ func (s *server) handler(w http.ResponseWriter, r *http.Request) {
 	path := strings.Trim(r.URL.Path, "/")
 
 	if len(path) < 1 {
+		if strings.ToLower(r.Method) != "get" {
+			http.Error(w, "Invalid path", http.StatusBadRequest)
+			return
+		}
+
+		prefix := r.URL.Query().Get("prefix")
 		nameSet := map[string]bool{}
 		for i, b := range s.buckets {
-			buckets, err := b.List("")
+			buckets, err := b.List(prefix)
 			if err != nil {
 				continue
 			} else if err != nil && i == len(s.buckets)-1 && len(nameSet) == 0 {
