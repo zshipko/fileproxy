@@ -20,12 +20,13 @@ func (d *s3Bucket) Config() bucketConfig {
 	return d.config
 }
 
-func newS3Bucket(cfg client.ConfigProvider, name string) (*s3Bucket, error) {
+func newS3Bucket(cfg client.ConfigProvider, bc bucketConfig) (*s3Bucket, error) {
 	conn := s3.New(cfg)
 	bucket := &s3Bucket{
-		conn: conn,
-		name: name,
-		cfg:  cfg,
+		conn:   conn,
+		name:   bc.Name,
+		cfg:    cfg,
+		config: bc,
 	}
 	return bucket, nil
 }
@@ -104,12 +105,4 @@ func (b *s3Bucket) List(prefix string) ([]string, error) {
 	}
 
 	return dest, nil
-}
-
-func (d *s3Bucket) Upload() bool {
-	return true
-}
-
-func (d *s3Bucket) Cache() bool {
-	return false
 }

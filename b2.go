@@ -19,23 +19,24 @@ func (d *b2Bucket) Config() bucketConfig {
 	return d.config
 }
 
-func newB2Bucket(api_id, api_key, name string) (*b2Bucket, error) {
+func newB2Bucket(bc bucketConfig) (*b2Bucket, error) {
 	ctx := context.Background()
 
-	c, err := b2.NewClient(ctx, api_id, api_key)
+	c, err := b2.NewClient(ctx, bc.ApiID, bc.ApiKey)
 	if err != nil {
 		return nil, err
 	}
 
-	b, err := c.NewBucket(ctx, name, nil)
+	b, err := c.NewBucket(ctx, bc.Name, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	bucket := &b2Bucket{
-		name:   name,
+		name:   bc.Name,
 		client: c,
 		bucket: b,
+		config: bc,
 	}
 
 	return bucket, nil
@@ -110,12 +111,4 @@ func (b *b2Bucket) List(prefix string) ([]string, error) {
 	}
 
 	return dest, nil
-}
-
-func (d *b2Bucket) Upload() bool {
-	return true
-}
-
-func (d *b2Bucket) Cache() bool {
-	return false
 }

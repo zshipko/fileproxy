@@ -98,17 +98,10 @@ func (d *diskBucket) List(prefix string) ([]string, error) {
 	return dest, err
 }
 
-func (d *diskBucket) Upload() bool {
-	return false
-}
-
-func (d *diskBucket) Cache() bool {
-	return true
-}
-
-func newDiskBucket(root string) *diskBucket {
-	os.MkdirAll(root, 0766)
+func newDiskBucket(config bucketConfig) *diskBucket {
+	os.MkdirAll(config.Name, 0766)
 	return &diskBucket{
-		root: root,
+		root:   config.Name,
+		config: config,
 	}
 }

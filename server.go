@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -18,8 +17,6 @@ type server struct {
 
 func (s *server) handler(w http.ResponseWriter, r *http.Request) {
 	path := strings.Trim(r.URL.Path, "/")
-
-	log.Println("PATH:", path)
 
 	if len(path) < 1 {
 		nameSet := map[string]bool{}
